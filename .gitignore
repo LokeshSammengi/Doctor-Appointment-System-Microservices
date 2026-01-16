@@ -1,0 +1,23 @@
+# Eclipse
+.metadata/
+.recommenders/
+*.log
+
+# Maven
+target/
+*.class
+
+# IDE
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Application configs
+application.properties
+application.yml
+
+
