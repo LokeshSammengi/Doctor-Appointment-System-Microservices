@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.hospital.appointment.entity.Appointment;
 import com.hospital.appointment.entity.Doctor;
 import com.hospital.appointment.entity.Patient;
+import com.hospital.appointment.exception.DataIntegrityViolationException;
 import com.hospital.appointment.exception.DoctorUnavaliableException;
 import com.hospital.appointment.exception.InvalidInputException;
 import com.hospital.appointment.exception.ResourceNotFoundException;
@@ -22,7 +23,7 @@ import com.hospital.appointment.vo.AppointmentVO;
 import jakarta.transaction.Transactional;
 
 @Service
-@Transactional
+//@Transactional
 public class AppointmentMgmtService implements IAppointmentMgmtService {
 
 	@Autowired
@@ -33,10 +34,15 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 	private IPatientRepository patientRepo;
 
 	// methods
+	/*
+	 * public Doctor validateDoctor(Long id) { Doctor doctorEntity =
+	 * doctorRepo.findById(id) .orElseThrow(() -> new
+	 * ResourceNotFoundException("Doctor", "ID", id)); return doctorEntity; }
+	 */
 	public Doctor validateDoctor(Long id) {
-		Doctor doctorEntity = doctorRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Doctor", "ID", id));
-		return doctorEntity;
+		Doctor doctor = doctorRepo.findDoctorForBooking(id)
+				.orElseThrow(() -> new DataIntegrityViolationException("Doctor", "id", id));
+		return doctor;
 	}
 
 	public Patient validatePatient(Long id) {
@@ -62,18 +68,18 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 	}
 
 	private void checkDoctorAvailability(Doctor doctor, LocalTime time) {
-		if (time.isAfter(doctor.getAvailableTo())||time.isBefore(doctor.getAvailableFrom())) {
+		if (time.isAfter(doctor.getAvailableTo()) || time.isBefore(doctor.getAvailableFrom())) {
 			throw new DoctorUnavaliableException("Doctor is not avaliable at this time");
 
 		}
 	}
+
 	
 	private void checkSlotConflict(Long doctorId, LocalDate date, LocalTime time) {
 		Doctor doc = validateDoctor(doctorId);
-		boolean exists = appointmentRepo.existsByDoctorAndAppointmentDateAndAppointmentTime(doc, date, time);
+		boolean exists = appointmentRepo.existsByDoctorIDAndAppointmentDateAndAppointmentTime(doc, date, time);
 		if (exists) {
-			throw new SlotAlreadyBookedException(
-					"Appointment slot already booked for this doctor");
+			throw new SlotAlreadyBookedException("Appointment slot already booked for this doctor");
 		}
 	}
 
@@ -81,27 +87,33 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 
 		Appointment appointment = new Appointment();
 		BeanUtils.copyProperties(vo, appointment);
-		 appointment.setDoctorID(doctor);
-		 appointment.setPatientID(patient);
+		appointment.setDoctorID(doctor);
+		appointment.setPatientID(patient);
 		appointment.setStatus("Booked");
 		appointment.setCreatedBy("Admin");
 		appointmentRepo.save(appointment);
 	}
 
 	@Override
+	@Transactional
 	public String bookAppointment(AppointmentVO vo) {
 
-		//Fetch doctor
-		Doctor doctor = validateDoctor(vo.getDoctorID());
-		//Fetch patient
-		Patient patient = validatePatient(vo.getPatientID());
-		
-		checkDoctorAvailability(doctor, vo.getAppointmentTime());
 		validateAppointmentDate(vo.getAppointmentDate());
-		checkSlotConflict(vo.getDoctorID(),vo.getAppointmentDate(), vo.getAppointmentTime());
+
+		// doctor row locks her
+		Doctor doctor = validateDoctor(vo.getDoctorID());
+
+		checkDoctorAvailability(doctor, vo.getAppointmentTime());
+
+		checkSlotConflict(vo.getDoctorID(), vo.getAppointmentDate(), vo.getAppointmentTime());
+
+		Patient patient = validatePatient(vo.getPatientID());
+
 		saveAppointment(vo, doctor, patient);
+
+
 		return "Appointment booked successfully";
-		
-		}
+
+	}
 
 }

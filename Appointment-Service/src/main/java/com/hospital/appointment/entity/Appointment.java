@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Table(name = "hospital_appointment_data")
+@Table(name = "hospital_appointment_data",uniqueConstraints = @UniqueConstraint(columnNames = {"doctorID","appointmentDate","appointmentTime"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,12 +52,12 @@ public class Appointment {
 	
 	@NonNull
 	@ManyToOne(targetEntity = Doctor.class,cascade = CascadeType.MERGE)
-	@JoinColumn(name="Doctor_ID",referencedColumnName = "doctorId",nullable = false)
+	@JoinColumn(name="doctor_id",referencedColumnName = "doctorId",nullable = false)
 	private Doctor doctorID;
 	
 	@NonNull
 	@ManyToOne(targetEntity = Patient.class,cascade = CascadeType.MERGE)
-	@JoinColumn(name = "Patient_ID",referencedColumnName = "patientID",nullable = false)
+	@JoinColumn(name = "patient_id",referencedColumnName = "patientID",nullable = false)
 	private Patient patientID;
 	
 	//Meta data properties
