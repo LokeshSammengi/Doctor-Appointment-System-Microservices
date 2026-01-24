@@ -25,6 +25,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<ApiResponse>(response,HttpStatus.BAD_REQUEST);	
 	}
 	
+	@ExceptionHandler(value = SameDoctorAndSpecExists.class)
+	public ResponseEntity<ApiResponse> handleCreationConflictException(SameDoctorAndSpecExists error){
+		ApiResponse response = new ApiResponse(HttpStatus.BAD_REQUEST.value(),error.getMessage());		
+		return new ResponseEntity<ApiResponse>(response,HttpStatus.BAD_REQUEST);	
+	}
+	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidationException(
             MethodArgumentNotValidException ex) {

@@ -2,6 +2,8 @@ package com.hospital.appointment.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.hospital.appointment.entity.Appointment;
 import com.hospital.appointment.entity.Doctor;
 import com.hospital.appointment.entity.Patient;
+import com.hospital.appointment.exception.AppointmentIdNotFound;
 import com.hospital.appointment.exception.DataIntegrityViolationException;
 import com.hospital.appointment.exception.DoctorUnavaliableException;
 import com.hospital.appointment.exception.InvalidInputException;
@@ -116,4 +119,41 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 
 	}
 
+	@Override
+	public AppointmentVO getAppointmentByIdvalue(Long id) {
+		Appointment entity	=appointmentRepo.findById(id).orElseThrow(()->new IllegalArgumentException("invalid id number"));
+		AppointmentVO vo = new AppointmentVO();
+		BeanUtils.copyProperties(entity,vo);
+		return vo;
+	}
+
+	@Override
+	public List<AppointmentVO> getAllAppointments() {
+		List<Appointment> listEntity =appointmentRepo.findAll();
+		List<AppointmentVO> listVO = new ArrayList<AppointmentVO>();
+		listEntity.forEach(entity->{
+			AppointmentVO vo = new AppointmentVO();
+			BeanUtils.copyProperties(entity, vo);
+			listVO.add(vo);
+		});
+		return listVO;
+	}
+
+	@Override
+	public String modifyAppointmentById(Long id, AppointmentVO new_vo) {
+		//check first id is visible or not
+		Appointment entity = appointmentRepo.findById(id).orElseThrow(()->new AppointmentIdNotFound("Appointment", "id", id));
+		BeanUtils.copyProperties(new_vo, entity);
+		return "Appointment updated id : "+id;
+	}
+
+	@Override
+	public String removeAppointmentById(Long id) {
+		//hard deletion
+		Appointment entity = appointmentRepo.findById(id).orElseThrow(()->new AppointmentIdNotFound("Appointment", "id", id));
+		appointmentRepo.deleteById(id);
+		return "Appointment deleted id : "+id;
+	}
+
+	
 }

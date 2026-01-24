@@ -1,17 +1,13 @@
 package com.hospital.appointment.exception;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.hospital.appointment.vo.AppointmentVO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +18,8 @@ public class ApiResponse {
 	
 
 	private String message;
+	
+	private List<AppointmentVO> listvo;
 	
 
 	private Integer statusCode;
@@ -35,4 +33,9 @@ public class ApiResponse {
         this.message = message;       
     }
 	
+    public ApiResponse(int status,List<AppointmentVO> listvo) {
+    	this.timestamp = LocalDateTime.now();
+    	this.statusCode = status;
+    	this.listvo = listvo;
+    }
 }

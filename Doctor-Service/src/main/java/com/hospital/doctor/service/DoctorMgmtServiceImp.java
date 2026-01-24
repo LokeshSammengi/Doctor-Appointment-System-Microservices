@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.hospital.doctor.entity.Doctor;
 import com.hospital.doctor.exception.InvalidInputException;
 import com.hospital.doctor.exception.ResourceNotFoundExcepiton;
+import com.hospital.doctor.exception.SameDoctorAndSpecExists;
 import com.hospital.doctor.repo.IDoctoRepository;
 import com.hospital.doctor.vo.DoctorVO;
 
@@ -20,8 +21,19 @@ public class DoctorMgmtServiceImp implements IDoctorMgmtService {
 	@Autowired
 	private IDoctoRepository doctorRepo;
 	
+	public boolean DoctorExistsBySameNameandSpecilazation(String doctorName,String specilazation) {
+		Boolean present = doctorRepo.existsByNameAndSpecialization(doctorName,specilazation);
+		return present;
+	}
 	@Override
+	
 	public String createDoctor(DoctorVO vo) {
+	
+		Boolean present=DoctorExistsBySameNameandSpecilazation(vo.getName(), vo.getSpecialization());
+		if(present) {
+			throw new SameDoctorAndSpecExists("Doctor","Name & Specilazation",vo.getName()+vo.getSpecialization());
+		}
+		else {
 		//validation 
 		if(vo.getConsulationFee()<100) {
 			throw new InvalidInputException("Consulation fee must be greater than 100");
@@ -35,6 +47,7 @@ public class DoctorMgmtServiceImp implements IDoctorMgmtService {
 		entity.setCreatedBy(System.getProperty("user.name"));
 		Long id=doctorRepo.save(entity).getDoctorId();
 		return "Doctor has successfully registered with id - " + id;
+		}
 	}
 
 	@Override
