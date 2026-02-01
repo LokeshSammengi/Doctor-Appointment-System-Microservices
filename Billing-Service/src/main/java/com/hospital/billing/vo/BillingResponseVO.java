@@ -1,6 +1,6 @@
-package com.hospital.vo;
+package com.hospital.billing.vo;
 
-import com.hospital.entity.PaymentStatus;
+import com.hospital.billing.entity.PaymentStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,4 +14,5 @@ public class BillingResponseVO {
 	private Long billId;
 	private Double totalAmount;
 	private PaymentStatus paymentStatus;
+	
 }

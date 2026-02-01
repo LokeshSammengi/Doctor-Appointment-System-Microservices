@@ -1,12 +1,13 @@
-package com.hospital.vo;
+package com.hospital.appointment.vo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hospital.appointment.entity.Doctor;
+import com.hospital.appointment.entity.Patient;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppointmentVO {
+public class AppointmentVORequest {
 	
 	private Long appointmentId;
 
@@ -27,10 +28,10 @@ public class AppointmentVO {
 	private LocalTime appointmentTime;
 	
 	@NotNull(message = "Doctor id is required")
-	private Long doctorID;
+	private DoctorVO doctor;
 	
 	@NotNull(message = "Patient id is required")
-	private Long patientID;
+	private PatientVO patient;
 	
-	private String status;
+	
 }

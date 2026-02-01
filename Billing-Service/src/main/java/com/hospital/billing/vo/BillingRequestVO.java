@@ -1,8 +1,8 @@
-package com.hospital.vo;
+package com.hospital.billing.vo;
 
 
 
-import com.hospital.entity.PaymentStatus;
+import com.hospital.billing.entity.PaymentStatus;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

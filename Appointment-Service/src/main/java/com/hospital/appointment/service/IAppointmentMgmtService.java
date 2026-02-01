@@ -2,15 +2,17 @@ package com.hospital.appointment.service;
 
 import java.util.List;
 
-import com.hospital.appointment.vo.AppointmentVO;
+import com.hospital.appointment.vo.AppointmentVORequest;
+import com.hospital.appointment.vo.AppointmentVOResponse;
 
 public interface IAppointmentMgmtService {
 
 	//response
-	public  String bookAppointment(AppointmentVO vo);
-	public AppointmentVO getAppointmentByIdvalue(Long id); //used for intra communication in billing service
-	public List<AppointmentVO> getAllAppointments();
-	public String modifyAppointmentById(Long id,AppointmentVO vo);
+	public  String bookAppointment(AppointmentVORequest vo);
+	public AppointmentVOResponse getAppointmentByIdvalue(Long id); //used for intra communication in billing service
+	public List<AppointmentVOResponse> getAllAppointments();
+	public String modifyAppointmentById(Long id,AppointmentVORequest vo);
 	public String removeAppointmentById(Long id);
+	
 
 }

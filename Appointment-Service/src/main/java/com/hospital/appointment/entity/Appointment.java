@@ -53,12 +53,12 @@ public class Appointment {
 	@NonNull
 	@ManyToOne(targetEntity = Doctor.class,cascade = CascadeType.MERGE)
 	@JoinColumn(name="doctor_id",referencedColumnName = "doctorId",nullable = false)
-	private Doctor doctorID;
+	private Doctor doctor;
 	
 	@NonNull
 	@ManyToOne(targetEntity = Patient.class,cascade = CascadeType.MERGE)
 	@JoinColumn(name = "patient_id",referencedColumnName = "patientID",nullable = false)
-	private Patient patientID;
+	private Patient patient;
 	
 	//Meta data properties
 	@Version

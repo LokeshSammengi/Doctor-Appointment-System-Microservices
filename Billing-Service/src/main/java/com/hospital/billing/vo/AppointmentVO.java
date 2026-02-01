@@ -1,4 +1,4 @@
-package com.hospital.appointment.vo;
+package com.hospital.billing.vo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,5 +32,5 @@ public class AppointmentVO {
 	@NotNull(message = "Patient id is required")
 	private Long patientID;
 	
-	
+	private String status;
 }

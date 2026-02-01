@@ -1,4 +1,4 @@
-package com.hospital.entity;
+package com.hospital.billing.entity;
 
 public enum PaymentStatus {
 
