@@ -19,7 +19,7 @@ import com.hospital.appointment.client.PatientClient;
 import com.hospital.appointment.exception.ApiResponse;
 import com.hospital.appointment.service.IAppointmentMgmtService;
 import com.hospital.appointment.vo.AppointmentVORequest;
-import com.hospital.appointment.vo.AppointmentVOResponse;
+
 import com.hospital.appointment.vo.DoctorVO;
 import com.hospital.appointment.vo.PatientVO;
 
@@ -41,21 +41,18 @@ public class AppointmentController {
 	@PostMapping("/save")
 	public ResponseEntity<ApiResponse> saveAppointment(@Valid @RequestBody AppointmentVORequest vo){
 		
-		Long docid = vo.getDoctor().getDoctorId();
+		Long docid = vo.getDoctorID();
 		DoctorVO docvo=docClient.fetchDoctorById(docid);
 		
 		if(docvo == null) {
 			throw new RuntimeException("NO doctor avaliable with this id "+docid);
 		}
 		
-		Long patid = vo.getPatient().getPatientID();
+		Long patid = vo.getPatientID();
 		PatientVO patvo=patClient.fetchPatientById(patid);
 		if(patvo == null) {
 			throw new RuntimeException("No patient avaliable with this id "+patid);
-		}
-		
-		vo.setDoctor(docvo);
-		vo.setPatient(patvo);		
+		}	
 		
 		String resultMsg = appointmentService.bookAppointment(vo);
 		ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(),resultMsg);
@@ -63,16 +60,14 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/fetchById/{id}")
-	public ResponseEntity<AppointmentVOResponse> fetchAppointmentById(@PathVariable Long id){
-		
-		AppointmentVOResponse vo=appointmentService.getAppointmentByIdvalue(id);
-		
-		return new ResponseEntity<AppointmentVOResponse>(vo,HttpStatus.OK);
+	public ResponseEntity<AppointmentVORequest> fetchAppointmentById(@PathVariable Long id){
+		AppointmentVORequest vo=appointmentService.getAppointmentByIdvalue(id);
+		return new ResponseEntity<AppointmentVORequest>(vo,HttpStatus.OK);
 	}
 	
 	@GetMapping("/fetchAll")
 	public ResponseEntity<ApiResponse> fetchAllAppointments(){
-		List<AppointmentVOResponse>listVO=appointmentService.getAllAppointments();
+		List<AppointmentVORequest>listVO=appointmentService.getAllAppointments();
 		ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(),listVO);
 		return new ResponseEntity<ApiResponse>(response,HttpStatus.OK);
 	}

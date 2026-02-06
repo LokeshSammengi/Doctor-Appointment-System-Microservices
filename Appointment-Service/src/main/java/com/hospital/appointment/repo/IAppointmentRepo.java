@@ -10,8 +10,8 @@ import com.hospital.appointment.entity.Doctor;
 
 public interface IAppointmentRepo extends JpaRepository<Appointment, Long> {
 
-	 boolean existsByDoctorAndAppointmentDateAndAppointmentTime(
-	            Doctor doctor,
+	 boolean existsByDoctorIDAndAppointmentDateAndAppointmentTime(
+	            Doctor doctorID,
 	            LocalDate appointmentDate,
 	            LocalTime appointmentTime
 	    );

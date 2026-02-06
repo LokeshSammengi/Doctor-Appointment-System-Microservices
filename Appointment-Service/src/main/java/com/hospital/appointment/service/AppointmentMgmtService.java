@@ -22,7 +22,7 @@ import com.hospital.appointment.repo.IAppointmentRepo;
 import com.hospital.appointment.repo.IDoctoRepository;
 import com.hospital.appointment.repo.IPatientRepository;
 import com.hospital.appointment.vo.AppointmentVORequest;
-import com.hospital.appointment.vo.AppointmentVOResponse;
+
 import com.hospital.appointment.vo.DoctorVO;
 import com.hospital.appointment.vo.PatientVO;
 
@@ -60,7 +60,7 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 	}
 
 	public LocalDate checkDoctorAvaliability(Doctor doc, AppointmentVORequest vo) {
-		Doctor doctor = validateDoctor(vo.getDoctor().getDoctorId());
+		Doctor doctor = validateDoctor(vo.getDoctorID());
 		if (vo.getAppointmentTime().isAfter(doctor.getAvailableFrom())
 				&& vo.getAppointmentTime().isBefore(doctor.getAvailableTo())) {
 			return vo.getAppointmentDate();
@@ -85,7 +85,7 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 	
 	private void checkSlotConflict(Long doctorId, LocalDate date, LocalTime time) {
 		Doctor doc = validateDoctor(doctorId);
-		boolean exists = appointmentRepo.existsByDoctorAndAppointmentDateAndAppointmentTime(doc, date, time);
+		boolean exists = appointmentRepo.existsByDoctorIDAndAppointmentDateAndAppointmentTime(doc, date, time);
 		if (exists) {
 			throw new SlotAlreadyBookedException("Appointment slot already booked for this doctor");
 		}
@@ -95,9 +95,8 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 
 		Appointment appointment = new Appointment();
 		BeanUtils.copyProperties(vo, appointment);
-		appointment.setDoctor(doctor);
-		appointment.setPatient(patient);
-		appointment.setStatus("Booked");
+		appointment.setDoctorID(doctor);
+		appointment.setPatientID(patient);
 		appointment.setCreatedBy("Admin");
 		appointmentRepo.save(appointment);
 	}
@@ -109,13 +108,13 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 		validateAppointmentDate(vo.getAppointmentDate());
 
 		// doctor row locks her
-		Doctor doctor = validateDoctor(vo.getDoctor().getDoctorId());
+		Doctor doctor = validateDoctor(vo.getDoctorID());
 
 		checkDoctorAvailability(doctor, vo.getAppointmentTime());
 
-		checkSlotConflict(vo.getDoctor().getDoctorId(), vo.getAppointmentDate(), vo.getAppointmentTime());
+		checkSlotConflict(vo.getDoctorID(), vo.getAppointmentDate(), vo.getAppointmentTime());
 
-		Patient patient = validatePatient(vo.getPatient().getPatientID());
+		Patient patient = validatePatient(vo.getPatientID());
 
 		saveAppointment(vo, doctor, patient);
 
@@ -125,46 +124,30 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 	}
 
 	@Override
-	public AppointmentVOResponse getAppointmentByIdvalue(Long id) {
+	public AppointmentVORequest getAppointmentByIdvalue(Long id) {
 		
 		Appointment entity	=appointmentRepo.findById(id)
 				.orElseThrow(()->new IllegalArgumentException("invalid id number"));
-		AppointmentVOResponse vo = new AppointmentVOResponse();
-		PatientVO patvo = new PatientVO();
-		DoctorVO docvo  = new DoctorVO();
 		
+		AppointmentVORequest vo = new AppointmentVORequest();
+
 		BeanUtils.copyProperties(entity,vo);
-		
-		Patient pat=entity.getPatient();
-		BeanUtils.copyProperties(pat, patvo);
-		
-		Doctor doc = entity.getDoctor();
-		BeanUtils.copyProperties(doc, docvo);
-						
-		vo.setDoctor(docvo);
-		vo.setPatient(patvo);
+		vo.setDoctorID(entity.getDoctorID().getDoctorId());
+		vo.setPatientID(entity.getPatientID().getPatientID());
 		
 		return vo;
 	}
 
 	@Override
-	public List<AppointmentVOResponse> getAllAppointments() {
+	public List<AppointmentVORequest> getAllAppointments() {
 		List<Appointment> listEntity =appointmentRepo.findAll();
-		List<AppointmentVOResponse> listVO = new ArrayList<AppointmentVOResponse>();
+		List<AppointmentVORequest> listVO = new ArrayList<AppointmentVORequest>();
 		listEntity.forEach(entity->{
-			AppointmentVOResponse vo = new AppointmentVOResponse();
+			AppointmentVORequest vo = new AppointmentVORequest();
 			BeanUtils.copyProperties(entity, vo);
 			
-			DoctorVO docvo = new DoctorVO();
-			Doctor doc=entity.getDoctor();
-			BeanUtils.copyProperties(doc, docvo);
-			
-			PatientVO patvo = new PatientVO();
-			Patient pat=entity.getPatient();
-			BeanUtils.copyProperties(pat, patvo);
-			
-			vo.setDoctor(docvo);
-			vo.setPatient(patvo);
+			vo.setDoctorID(entity.getDoctorID().getDoctorId());
+			vo.setPatientID(entity.getPatientID().getPatientID());
 			
 			listVO.add(vo);			
 		});
@@ -179,20 +162,21 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 		//validate appointment date 
 		validateAppointmentDate(new_vo.getAppointmentDate());
 		//check whether doc is available or not 
-		Doctor doc =validateDoctor(new_vo.getDoctor().getDoctorId());
+		Doctor doc =validateDoctor(new_vo.getDoctorID());
 		//check whether pat is available or not
-		Patient pat =validatePatient(new_vo.getPatient().getPatientID());
+		Patient pat =validatePatient(new_vo.getPatientID());
 		//check timings are perfect or not
 		checkDoctorAvailability(doc, new_vo.getAppointmentTime());
 		//check slot conflict 
-		checkSlotConflict(new_vo.getDoctor().getDoctorId(), new_vo.getAppointmentDate(), new_vo.getAppointmentTime());
+		checkSlotConflict(new_vo.getDoctorID(), new_vo.getAppointmentDate(), new_vo.getAppointmentTime());
 		
 		//update the entity 
 		entity.setAppointmentDate(new_vo.getAppointmentDate());
 		entity.setAppointmentTime(new_vo.getAppointmentTime());
 		//set relationship entity
-		entity.setDoctor(doc);
-		entity.setPatient(pat);
+		entity.setDoctorID(doc);
+		entity.setPatientID(pat);
+		entity.setStatus(new_vo.getStatus());		
 		//save the entity
 		appointmentRepo.save(entity);
 		
@@ -200,6 +184,7 @@ public class AppointmentMgmtService implements IAppointmentMgmtService {
 	}
 
 	@Override
+	@Transactional
 	public String removeAppointmentById(Long id) {
 		//hard deletion
 		Appointment entity = appointmentRepo.findById(id)

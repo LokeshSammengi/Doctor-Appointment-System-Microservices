@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppointmentVOResponse {
+public class AppointmentVORequest {
 	
 	private Long appointmentId;
 

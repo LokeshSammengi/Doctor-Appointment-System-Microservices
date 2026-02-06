@@ -35,10 +35,10 @@ public class BillingRestController {
 	}
 	
 	@GetMapping("/appointmentBill/{id}")
-	public ResponseEntity<Billing> getBillDetails(@PathVariable Long id){
-		Billing bill=service.getBillByAppointmentId(id);
+	public ResponseEntity<BillingCompleteDetails> getBillDetails(@PathVariable Long id){
+		BillingCompleteDetails bill=service.getBillByAppointmentId(id);
 //		return new ResponseEntity<Billing>(bill,HttpStatus.OK);
-		return ResponseEntity.ok(bill);
+		return new ResponseEntity<BillingCompleteDetails>(bill,HttpStatus.OK);
 	}
 	
 	@GetMapping("/fetchingAllResponse")
@@ -58,4 +58,4 @@ public class BillingRestController {
 		String msg = service.deleteBillById(id);
 		return new ResponseEntity<String>(msg,HttpStatus.OK);
 	}
-}
+}	

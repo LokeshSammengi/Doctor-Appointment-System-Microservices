@@ -3,6 +3,9 @@ package com.hospital.patient.entity;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
@@ -26,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE Hospital_patient_data SET active_sw='inactive' WHERE patientid=? AND update_count=?")
+@SQLRestriction("active_sw<>'inactive'")
 public class Patient {
 	
 	@Id

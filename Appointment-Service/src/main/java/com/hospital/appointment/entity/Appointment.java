@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
@@ -31,6 +33,9 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
+
+@SQLDelete(sql = "UPDATE hospital_appointment_data SET active_sw='inactive' WHERE appointment_id=? AND update_count=?")
+@SQLRestriction("active_sw<>'inactive'")
 public class Appointment {
 
 	@Id
@@ -53,12 +58,12 @@ public class Appointment {
 	@NonNull
 	@ManyToOne(targetEntity = Doctor.class,cascade = CascadeType.MERGE)
 	@JoinColumn(name="doctor_id",referencedColumnName = "doctorId",nullable = false)
-	private Doctor doctor;
+	private Doctor doctorID;
 	
 	@NonNull
 	@ManyToOne(targetEntity = Patient.class,cascade = CascadeType.MERGE)
 	@JoinColumn(name = "patient_id",referencedColumnName = "patientID",nullable = false)
-	private Patient patient;
+	private Patient patientID;
 	
 	//Meta data properties
 	@Version

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import org.hibernate.annotations.UpdateTimestamp;
 
 
@@ -26,7 +29,8 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-
+@SQLDelete(sql = "UPDATE Hospital_Doctor_DB SET active_switch='inactive' WHERE doctor_id=? AND update_count=?")
+@SQLRestriction("active_switch<>'inactive'")
 public class Doctor {
 
 	@Id

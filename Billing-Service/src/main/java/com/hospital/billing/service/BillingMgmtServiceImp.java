@@ -3,17 +3,15 @@ package com.hospital.billing.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hospital.appointment.vo.AppointmentVOResponse;
+import com.hospital.appointment.vo.AppointmentVORequest;
 import com.hospital.billing.IntraCommunication.AppointmentClient;
 import com.hospital.billing.entity.Billing;
 import com.hospital.billing.entity.PaymentStatus;
-import com.hospital.billing.exception.AppointmentNotCompleted;
 import com.hospital.billing.repo.IBillingRepo;
 import com.hospital.billing.vo.AppointmentVO;
 import com.hospital.billing.vo.BillingCompleteDetails;
@@ -36,7 +34,8 @@ public class BillingMgmtServiceImp implements IBillingMgmtService {
 	public BillingResponseVO generateBill(BillingRequestVO request) {
 		
 		//intra communication using 
-		AppointmentVOResponse vo = client.fetchAppointmentById(request.getAppointmentId());
+//		AppointmentVORequest vo = client.fetchAppointmentById(request.getAppointmentId());
+		AppointmentVORequest vo=client.fetchAppointmentById(request.getAppointmentId());
 		AppointmentVO Bill_Appoint_VO = new AppointmentVO();
 		BeanUtils.copyProperties(vo, Bill_Appoint_VO);
 		if(!"completed".equals(Bill_Appoint_VO.getStatus())) {
@@ -65,9 +64,12 @@ public class BillingMgmtServiceImp implements IBillingMgmtService {
 	}
 	
 	
-	public Billing getBillByAppointmentId(Long id) {
-		return billRepo.findByAppointmentId(id)
+	public BillingCompleteDetails getBillByAppointmentId(Long id) {
+		Billing billentity = billRepo.findByAppointmentId(id)
 				     		.orElseThrow(()-> new RuntimeException("Bill Not Found By this Id :"+id));
+		BillingCompleteDetails bill = new BillingCompleteDetails();
+		BeanUtils.copyProperties(billentity, bill);
+		return bill;
 	}
 
 

@@ -12,7 +12,7 @@ public interface IBillingMgmtService {
 
 	
 	public BillingResponseVO generateBill(BillingRequestVO request);
-	public Billing getBillByAppointmentId(Long id);
+	public BillingCompleteDetails getBillByAppointmentId(Long id);
 	
 	public List<BillingResponseVO>  getAllBills();
 	public List<BillingCompleteDetails> getAllBillsByDate(LocalDateTime start,LocalDateTime end);

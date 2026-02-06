@@ -3,7 +3,8 @@ package com.hospital.appointment.exception;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.hospital.appointment.vo.AppointmentVOResponse;
+import com.hospital.appointment.vo.AppointmentVORequest;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class ApiResponse {
 	
 //	private List<AppointmentVORequest> listvo;
 	
-	private List<AppointmentVOResponse> listvoresponse;
+	private List<AppointmentVORequest> listvorequest;
 	
 	private Integer statusCode;
 	
@@ -34,10 +35,10 @@ public class ApiResponse {
         this.message = message;       
     }
 	
-    public ApiResponse(int status,List<AppointmentVOResponse> listvoresponse) {
+    public ApiResponse(int status,List<AppointmentVORequest> listvoreq) {
     	this.timestamp = LocalDateTime.now();
     	this.statusCode = status;
-    	this.listvoresponse = listvoresponse;
+    	this.listvorequest = listvoreq;
     }
 
 	
