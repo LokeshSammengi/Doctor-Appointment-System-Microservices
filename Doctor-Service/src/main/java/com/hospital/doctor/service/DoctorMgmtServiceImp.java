@@ -39,7 +39,7 @@ public class DoctorMgmtServiceImp implements IDoctorMgmtService {
 			throw new InvalidInputException("Consulation fee must be greater than 100");
 		}
 		if(vo.getAvailableFrom().isAfter(vo.getAvailableTo())) {
-			throw new InvalidInputException("Available From time must be before Available To time");
+			throw new InvalidInputException("Available from time must be before Available To time");
 		}		
 		//now we need to convert the vo to entity
 		Doctor entity = new Doctor();
