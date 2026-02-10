@@ -39,7 +39,7 @@ public class BillingMgmtServiceImp implements IBillingMgmtService {
 		AppointmentVO Bill_Appoint_VO = new AppointmentVO();
 		BeanUtils.copyProperties(vo, Bill_Appoint_VO);
 		if(!"completed".equals(Bill_Appoint_VO.getStatus())) {
-			throw new RuntimeException("Bill can be generated only for completed appointments");
+			throw new RuntimeException("Bill can be generated only for completed appointment");
 		}
 		
 		
