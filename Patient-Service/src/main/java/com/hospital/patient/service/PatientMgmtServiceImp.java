@@ -87,7 +87,7 @@ public class PatientMgmtServiceImp implements IPatientMgmtService {
 		//now i am performing hard deletion
 		Patient entity=patientRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Patient","id", id));
 		patientRepo.delete(entity);
-		return "Patient with id "+id+" deleted from database";
+		return "Patient with id "+id+" deleted from database..";
 	}
 
 }
