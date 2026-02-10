@@ -45,7 +45,7 @@ public class AppointmentController {
 		DoctorVO docvo=docClient.fetchDoctorById(docid);
 		
 		if(docvo == null) {
-			throw new RuntimeException("NO doctor avaliable with this id "+docid);
+			throw new RuntimeException("No doctor avaliable with this id "+docid);
 		}
 		
 		Long patid = vo.getPatientID();
